@@ -37,7 +37,18 @@ def dump(root: Node) -> str:
 # If the key is not in the tree, insert it with a keycount of 1.
 # If the key is in the tree, increment its keycount.
 def insert(root: Node, key: int) -> Node:
-    # YOUR CODE GOES HERE.
+    if root is None:
+        return Node(key)
+    
+    if key == root.key:
+        root.keycount += 1
+        
+    elif key < root.key:
+        root.leftchild = insert(root.leftchild, key)
+        
+    else:
+        root.rightchild = insert(root.rightchild, key)
+        
     return root
 
 # For the tree rooted at root and the key given:
