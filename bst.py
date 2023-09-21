@@ -38,7 +38,8 @@ def dump(root: Node) -> str:
 # If the key is in the tree, increment its keycount.
 def insert(root: Node, key: int) -> Node:
     if root is None:
-        return Node(key)
+        return Node(key, keycount = 1)
+    
     
     if key == root.key:
         root.keycount += 1
@@ -56,23 +57,30 @@ def insert(root: Node, key: int) -> Node:
 # If the key is in the tree, decrement its key count. If they keycount goes to 0, remove the key.
 # When replacement is necessary use the inorder successor.
 def delete(root: Node, key: int) -> Node:
-    if root is None:
-        return root
+    def delete(root: Node, key: int) -> Node:
+        if root is None:
+            return root
     
     if key == root.key:
-        if root.keycount > 1:
-            root.keycount -= 1
-        else:
-            root.keycount == 1
-    elif key > root.key:
-        root.rightchild = delete(root.rightchild, key)
-    else:
-        root.leftchild = delete(root.leftchild, key)
-        
-    return root
+        if root.leftchild is None:
+            temp = root.rightchild
+            root = None
+            return temp
+        elif root.rightchild is None:
+            temp = root.leftchild
+            root = None
+            return temp
+
+        root.key = minValue(root.rightchild)
+        root.rightchild = delete(root.rightchild, root.key)
 
 
-    
+
+    def minValue(node: Node) -> int:
+        curr = node
+    while curr.leftchild:
+        curr = curr.leftchild
+    return curr.key
 # For the tree rooted at root and the key given:
 # Calculate the list of keys on the path from the root towards the search key.
 # The key is not guaranteed to be in the tree.
