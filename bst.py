@@ -52,35 +52,48 @@ def insert(root: Node, key: int) -> Node:
         
     return root
 
+
+def minValue(node: Node) -> int:
+        curr = node
+        while curr.leftchild:
+            urr = curr.leftchild
+        return curr.key
+
 # For the tree rooted at root and the key given:
 # If the key is not in the tree, do nothing.
 # If the key is in the tree, decrement its key count. If they keycount goes to 0, remove the key.
 # When replacement is necessary use the inorder successor.
 def delete(root: Node, key: int) -> Node:
-    def delete(root: Node, key: int) -> Node:
-        if root is None:
-            return root
+
+    if not root:
+        return root
     
-    if key == root.key:
-        if root.leftchild is None:
-            temp = root.rightchild
-            root = None
-            return temp
-        elif root.rightchild is None:
-            temp = root.leftchild
-            root = None
-            return temp
+    # If the key is smaller than the root's key, it lies in the left subtree
+    if key < root.key:
+        root.leftchild = delete(root.leftchild, key)
 
+    # If the key is larger than the root's key, it lies in the right subtree
+    elif key > root.key:
+        root.rightchild = delete(root.rightchild, key)
+
+    # If key is same as root's key, then this is the node to be deleted
+    else:
+        # Node with only one child or no child
+        if not root.leftchild:
+            return root.rightchild
+        elif not root.rightchild:
+            return root.leftchild
+        
+        # Node with two children: get the inorder successor (smallest in the right subtree)
         root.key = minValue(root.rightchild)
+        
+        # Decrease keycount of inorder successor or remove it if keycount becomes 0
         root.rightchild = delete(root.rightchild, root.key)
+        
+    return root
 
 
-
-    def minValue(node: Node) -> int:
-        curr = node
-    while curr.leftchild:
-        curr = curr.leftchild
-    return curr.key
+    
 # For the tree rooted at root and the key given:
 # Calculate the list of keys on the path from the root towards the search key.
 # The key is not guaranteed to be in the tree.
