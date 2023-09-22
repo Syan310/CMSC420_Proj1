@@ -53,11 +53,11 @@ def insert(root: Node, key: int) -> Node:
     return root
 
 
-def minValue(node: Node) -> int:
+def minValue(node: Node) -> Node:
         curr = node
         while curr.leftchild:
-            urr = curr.leftchild
-        return curr.key
+            curr = curr.leftchild
+        return curr
 
 # For the tree rooted at root and the key given:
 # If the key is not in the tree, do nothing.
