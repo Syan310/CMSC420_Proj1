@@ -84,12 +84,13 @@ def delete(root: Node, key: int) -> Node:
             # Inorder successor
             temp = minValue(root.rightchild)
             root.key = temp.key
-            root.keycount = 1  # Since we're moving the successor to this node
+            root.keycount = temp.keycount  # Updated this line
 
             # Now, remove or decrement the keycount of the inorder successor
             root.rightchild = delete(root.rightchild, temp.key)
 
     return root
+
 
         
 
