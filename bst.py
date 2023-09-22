@@ -63,34 +63,29 @@ def minValue(node: Node) -> int:
 # If the key is not in the tree, do nothing.
 # If the key is in the tree, decrement its key count. If they keycount goes to 0, remove the key.
 # When replacement is necessary use the inorder successor.
-def delete(root: Node, key: int) -> Node:
 
+def delete(root: Node, key: int) -> Node:
     if not root:
         return root
-    
-    # If the key is smaller than the root's key, it lies in the left subtree
+
     if key < root.key:
         root.leftchild = delete(root.leftchild, key)
-
-    # If the key is larger than the root's key, it lies in the right subtree
     elif key > root.key:
         root.rightchild = delete(root.rightchild, key)
-
-    # If key is same as root's key, then this is the node to be deleted
     else:
-        # Node with only one child or no child
-        if not root.leftchild:
-            return root.rightchild
-        elif not root.rightchild:
-            return root.leftchild
-        
-        # Node with two children: get the inorder successor (smallest in the right subtree)
-        root.key = minValue(root.rightchild)
-        
-        # Decrease keycount of inorder successor or remove it if keycount becomes 0
-        root.rightchild = delete(root.rightchild, root.key)
-        
+        if root.keycount > 1:
+            root.keycount -= 1
+        else:
+            if not root.leftchild:
+                return root.rightchild
+            elif not root.rightchild:
+                return root.leftchild
+            root.key = minValue(root.rightchild).key
+            root.keycount = minValue(root.rightchild).keycount
+            root.rightchild = delete(root.rightchild, root.key)
+
     return root
+        
 
 
     
