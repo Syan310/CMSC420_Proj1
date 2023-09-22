@@ -38,7 +38,7 @@ def dump(root: Node) -> str:
 # If the key is in the tree, increment its keycount.
 def insert(root: Node, key: int) -> Node:
     if root is None:
-        return Node(key, keycount = 1)
+        return Node(key = key, keycount = 1)
     
     
     if key == root.key:
