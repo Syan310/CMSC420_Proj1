@@ -102,7 +102,6 @@ def delete(root: Node, key: int) -> Node:
 def search(root: Node, search_key: int) -> str:
     list = []
     curr = root
-    list.append(curr)
    
     while curr:
         list.append(curr.key)
@@ -114,8 +113,8 @@ def search(root: Node, search_key: int) -> str:
         elif curr.key < search_key:
             curr = curr.rightchild
             
-    # Then tweak the next line so it uses your list rather than None.
     return (json.dumps(list, indent=2))
+
 
 # For the tree rooted at root, find the preorder traversal.
 # Return the json.dumps of the list with indent=2.
