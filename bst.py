@@ -67,7 +67,7 @@ def minValue(node: Node) -> Node:
 # When replacement is necessary use the inorder successor.
 
 def delete(root: Node, key: int) -> Node:
-    if not root:
+    if root is None:
         return root
 
     if key < root.key:
@@ -75,17 +75,18 @@ def delete(root: Node, key: int) -> Node:
     elif key > root.key:
         root.rightchild = delete(root.rightchild, key)
     else:
-        if root.keycount > 1:
-            root.keycount -= 1
-        else:
-             root.keycount -= 1
+        root.keycount -= 1
         if root.keycount == 0:
             if root.leftchild is None:
                 return root.rightchild
             elif root.rightchild is None:
                 return root.leftchild
-            root.key = minValue(root.rightchild).key
-            root.rightchild = delete(root.rightchild, root.key)
+
+            temp = minValue(root.rightchild)
+            root.key = temp.key
+            root.keycount = temp.keycount
+            root.rightchild = delete(root.rightchild, temp.key)
+
     return root
 
 
