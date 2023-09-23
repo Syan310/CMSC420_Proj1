@@ -117,64 +117,55 @@ def search(root: Node, search_key: int) -> str:
 
 # For the tree rooted at root, find the preorder traversal.
 # Return the json.dumps of the list with indent=2.
+def preorder_helper(node: Node, result: List[int]):
+    if node:
+        result.append(node.key)
+        preorder_helper(node.leftchild, result)
+        preorder_helper(node.rightchild, result)
+
 def preorder(root: Node) -> str:
-        result = []
-
-        def helper(node: Node):
-            if not node:
-                return
-            result.append(node.key)
-            helper(node.leftchild)
-            helper(node.rightchild)
-
-        helper(root)
-        return json.dumps(result, indent=2)
+    result = []
+    preorder_helper(root, result)
+    return json.dumps(result, indent=2)
 
 # For the tree rooted at root, find the inorder traversal.
 # Return the json.dumps of the list with indent=2.
-def inorder(root: Node) -> str:
-    result = []
 
-    def helper(node: Node):
-        if not node:
-            return
-        helper(node.leftchild)
+def inorder_helper(node: Node, result: List[int]):
+    if node:
+        inorder_helper(node.leftchild, result)
         result.append(node.key)
-        helper(node.rightchild)
-
-    helper(root)
+        inorder_helper(node.rightchild, result)
+        
+def inorder(root: Node) -> str: 
+    result = [] 
+    inorder_helper(root, result) 
     return json.dumps(result, indent=2)
 
 
 # For the tree rooted at root, find the postorder traversal.
 # Return the json.dumps of the list with indent=2.
-def postorder(root: Node) -> str:
-    result = []
-
-    def helper(node: Node):
-        if not node:
-            return
-        helper(node.leftchild)
-        helper(node.rightchild)
-        result.append(node.key)
-
-    helper(root)
-    return json.dumps(result, indent=2)
+def postorder_helper(node: Node, result: List[int]): 
+    if node: 
+        postorder_helper(node.leftchild, result) 
+        postorder_helper(node.rightchild, result) 
+        result.append(node.key) 
+        
+def postorder(root: Node) -> str: 
+    result = [] 
+    postorder_helper(root, result) 
+    return json.dumps(result, indent=2) 
 
 # For the tree rooted at root, find the BFT traversal (go left-to-right).
 # Return the json.dumps of the list with indent=2.
 def bft(root: Node) -> str:
     result = []
-    if not root:
-        return json.dumps(result, indent=2)
-
     queue = [root]
     while queue:
         current = queue.pop(0)
-        result.append(current.key)
-        if current.leftchild:
+        if current:
+            result.append(current.key)
             queue.append(current.leftchild)
-        if current.rightchild:
             queue.append(current.rightchild)
 
     return json.dumps(result, indent=2)
