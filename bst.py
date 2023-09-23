@@ -103,20 +103,17 @@ def delete(root: Node, key: int) -> Node:
 # Return the json.dumps of the list with indent=2.
 def search(root: Node, search_key: int) -> str:
     path = []
-
-    def search_helper(node, key):
-        if node is None:
-            return False
-        path.append(node.key)
-        if key == node.key:
-            return True
-        elif key < node.key:
-            return search_helper(node.leftchild, key)
+    current = root
+    while current:
+        path.append(current.key)
+        if search_key < current.key:
+            current = current.leftchild
+        elif search_key > current.key:
+            current = current.rightchild
         else:
-            return search_helper(node.rightchild, key)
-
-    search_helper(root, search_key)
+            break
     return json.dumps(path, indent=2)
+
 
 
 # For the tree rooted at root, find the preorder traversal.
