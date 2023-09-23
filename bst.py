@@ -15,91 +15,91 @@ def dump(root: Node) -> str:
     #...
 
 def insert(root: Node, key: int) -> Node:
-    if root is None:
+    if not root:
         return Node(key=key, keycount=1)
-    if key < root.key:
-        root.leftchild = insert(root.leftchild, key)
-    elif key > root.key:
-        root.rightchild = insert(root.rightchild, key)
-    else:  # key is already in the tree.
+    
+    if key == root.key:
         root.keycount += 1
+    elif key < root.key:
+        root.leftchild = insert(root.leftchild, key)
+    else:
+        root.rightchild = insert(root.rightchild, key)
     return root
 
-def find_min_node(node: Node) -> Node:
-    current = node
-    while current.leftchild is not None:
-        current = current.leftchild
-    return current
-
 def delete(root: Node, key: int) -> Node:
-    if root is None:
+    if not root:
         return root
+    
+    # Recursive cases
     if key < root.key:
         root.leftchild = delete(root.leftchild, key)
     elif key > root.key:
         root.rightchild = delete(root.rightchild, key)
     else:
-        if root.keycount > 1:
-            root.keycount -= 1
-        else:
-            if root.leftchild is None:
+        root.keycount -= 1
+        if root.keycount == 0:
+            if not root.leftchild:
                 return root.rightchild
-            elif root.rightchild is None:
+            elif not root.rightchild:
                 return root.leftchild
-            temp = find_min_node(root.rightchild)
-            root.key = temp.key
-            root.keycount = temp.keycount
+            temp = get_min(root.rightchild)
+            root.key, root.keycount = temp.key, temp.keycount
             root.rightchild = delete(root.rightchild, temp.key)
     return root
+
+def get_min(node):
+    current = node
+    while current.leftchild:
+        current = current.leftchild
+    return current
 
 def search(root: Node, search_key: int) -> str:
     path = []
     current = root
-    while current is not None:
+    while current:
         path.append(current.key)
-        if search_key < current.key:
+        if search_key == current.key:
+            break
+        elif search_key < current.key:
             current = current.leftchild
-        elif search_key > current.key:
-            current = current.rightchild
         else:
-            break  # key is found.
+            current = current.rightchild
     return json.dumps(path, indent=2)
 
 def preorder(root: Node) -> str:
-    result = []
-    if root:
-        result.append(root.key)
-        result.extend(json.loads(preorder(root.leftchild)))
-        result.extend(json.loads(preorder(root.rightchild)))
-    return json.dumps(result)
+    def traverse(node):
+        if not node:
+            return []
+        return [node.key] + traverse(node.leftchild) + traverse(node.rightchild)
+
+    return json.dumps(traverse(root), indent=2)
 
 def inorder(root: Node) -> str:
-    result = []
-    if root:
-        result.extend(json.loads(inorder(root.leftchild)))
-        result.append(root.key)
-        result.extend(json.loads(inorder(root.rightchild)))
-    return json.dumps(result)
+    def traverse(node):
+        if not node:
+            return []
+        return traverse(node.leftchild) + [node.key] + traverse(node.rightchild)
+
+    return json.dumps(traverse(root), indent=2)
 
 def postorder(root: Node) -> str:
-    result = []
-    if root:
-        result.extend(json.loads(postorder(root.leftchild)))
-        result.extend(json.loads(postorder(root.rightchild)))
-        result.append(root.key)
-    return json.dumps(result)
+    def traverse(node):
+        if not node:
+            return []
+        return traverse(node.leftchild) + traverse(node.rightchild) + [node.key]
+
+    return json.dumps(traverse(root), indent=2)
 
 def bft(root: Node) -> str:
+    if not root:
+        return json.dumps([], indent=2)
+    queue = [root]
     result = []
-    if root is None:
-        return json.dumps(result)
-    queue = Queue()
-    queue.put(root)
-    while not queue.empty():
-        node = queue.get()
-        result.append(node.key)
-        if node.leftchild is not None:
-            queue.put(node.leftchild)
-        if node.rightchild is not None:
-            queue.put(node.rightchild)
-    return json.dumps(result)
+    while queue:
+        current = queue.pop(0)
+        result.append(current.key)
+        if current.leftchild:
+            queue.append(current.leftchild)
+        if current.rightchild:
+            queue.append(current.rightchild)
+    return json.dumps(result, indent=2)
