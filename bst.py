@@ -54,17 +54,18 @@ def insert(root: Node, key: int) -> Node:
 
 
 
+
+def minValue(node: Node) -> Node:
+        curr = node
+        while curr.leftchild:
+            curr = curr.leftchild
+        return curr
+
 # For the tree rooted at root and the key given:
 # If the key is not in the tree, do nothing.
 # If the key is in the tree, decrement its key count. If they keycount goes to 0, remove the key.
 # When replacement is necessary use the inorder successor.
 
-def find_min(node: Node) -> Node: 
-    current = node 
-    while current.leftchild:
-        current = current.leftchild
-        return current 
-    
 def delete(root: Node, key: int) -> Node:
     if not root:
         return root
@@ -81,9 +82,17 @@ def delete(root: Node, key: int) -> Node:
                 return root.rightchild
             elif not root.rightchild:
                 return root.leftchild
-            root.key = find_min(root.rightchild).key
-            root.keycount = find_min(root.rightchild).keycount
-            root.rightchild = delete(root.rightchild, root.key)
+
+            # Inorder successor
+            temp = minValue(root.rightchild)
+            root.key = temp.key
+            root.keycount = temp.keycount
+
+            # Now, remove or decrement the keycount of the inorder successor
+            if temp.keycount > 1:
+                temp.keycount -= 1
+            else:
+                root.rightchild = delete(root.rightchild, temp.key)
 
     return root
 
