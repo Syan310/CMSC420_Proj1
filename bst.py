@@ -1,4 +1,4 @@
-import json
+ximport json
 from typing import List
 
 # DO NOT MODIFY THIS CLASS!
@@ -55,43 +55,31 @@ def insert(root: Node, key: int) -> Node:
 
 
 
-def minValue(node: Node) -> Node:
-        curr = node
-        while curr.leftchild:
-            curr = curr.leftchild
-        return curr
-
 # For the tree rooted at root and the key given:
 # If the key is not in the tree, do nothing.
 # If the key is in the tree, decrement its key count. If they keycount goes to 0, remove the key.
 # When replacement is necessary use the inorder successor.
 
 def delete(root: Node, key: int) -> Node:
-    if root is None:
-        return root
+    if not root:
+        return None
 
-    if key < root.key:
-        root.leftchild = delete(root.leftchild, key)
-    elif key > root.key:
-        root.rightchild = delete(root.rightchild, key)
-    else:
+    if key == root.key:
         root.keycount -= 1
-        if root.keycount == 0:
-            if root.leftchild is None:
-                return root.rightchild
-            elif root.rightchild is None:
-                return root.leftchild
-
-            temp = minValue(root.rightchild)
-            successor_keycount = temp.keycount
-            temp.keycount -= 1  # Decrement the keycount of the successor
-            
-            if temp.keycount == 0:  # Only delete if its keycount becomes 0
-                root.key = temp.key
-                root.rightchild = delete(root.rightchild, temp.key)
+        if root.keycount <= 0:
+            # If node with two children, get the inorder successor
+            if root.leftchild and root.rightchild:
+                successor = root.rightchild
+                while successor.leftchild:
+                    successor = successor.leftchild
+                root.key, root.keycount = successor.key, successor.keycount
+                root.rightchild = delete(root.rightchild, successor.key)
             else:
-                root.key = temp.key
-
+                root = root.leftchild or root.rightchild
+    elif key < root.key:
+        root.leftchild = delete(root.leftchild, key)
+    else:
+        root.rightchild = delete(root.rightchild, key)
     return root
 
 
