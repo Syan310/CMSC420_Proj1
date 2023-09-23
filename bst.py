@@ -83,11 +83,17 @@ def delete(root: Node, key: int) -> Node:
                 return root.leftchild
 
             temp = minValue(root.rightchild)
-            root.key = temp.key
-            root.keycount = 1  # Reset the keycount of the current node
-            root.rightchild = delete(root.rightchild, temp.key)
+            successor_keycount = temp.keycount
+            temp.keycount -= 1  # Decrement the keycount of the successor
+            
+            if temp.keycount == 0:  # Only delete if its keycount becomes 0
+                root.key = temp.key
+                root.rightchild = delete(root.rightchild, temp.key)
+            else:
+                root.key = temp.key
 
     return root
+
 
 
 
