@@ -124,53 +124,63 @@ def search(root: Node, search_key: int) -> str:
 # For the tree rooted at root, find the preorder traversal.
 # Return the json.dumps of the list with indent=2.
 def preorder(root: Node) -> str:
-    list = []
-    if root is None:
-        return []
-    
-    list =  [root.key] + preorder(root.leftchild) + preorder(root.rightchild)
-    
-    return(json.dumps(list, indent =2))
+        result = []
+
+        def helper(node: Node):
+            if not node:
+                return
+            result.append(node.key)
+            helper(node.leftchild)
+            helper(node.rightchild)
+
+        helper(root)
+        return json.dumps(result, indent=2)
 
 # For the tree rooted at root, find the inorder traversal.
 # Return the json.dumps of the list with indent=2.
 def inorder(root: Node) -> str:
-    list = []
-    if root is None:
-        return []
-    
-    list =   inorder(root.leftchild) + [root.key] + inorder(root.rightchild)
-    
-    return(json.dumps(list, indent =2))
+    result = []
+
+    def helper(node: Node):
+        if not node:
+            return
+        helper(node.leftchild)
+        result.append(node.key)
+        helper(node.rightchild)
+
+    helper(root)
+    return json.dumps(result, indent=2)
 
 
 # For the tree rooted at root, find the postorder traversal.
 # Return the json.dumps of the list with indent=2.
 def postorder(root: Node) -> str:
-    list = []
-    if root is None:
-        return []
-    
-    list = postorder(root.leftchild) + postorder(root.rightchild) + [root.key]
-    
-    return(json.dumps(list, indent =2))
+    result = []
+
+    def helper(node: Node):
+        if not node:
+            return
+        helper(node.leftchild)
+        helper(node.rightchild)
+        result.append(node.key)
+
+    helper(root)
+    return json.dumps(result, indent=2)
 
 # For the tree rooted at root, find the BFT traversal (go left-to-right).
 # Return the json.dumps of the list with indent=2.
 def bft(root: Node) -> str:
-    if root is None:
-        return []
-
     result = []
+    if not root:
+        return json.dumps(result, indent=2)
+
     queue = [root]
-
     while queue:
-        curr = queue.pop(0)  
-        result.append(curr.key)
+        current = queue.pop(0)
+        result.append(current.key)
+        if current.leftchild:
+            queue.append(current.leftchild)
+        if current.rightchild:
+            queue.append(current.rightchild)
 
-        if curr.leftchild:
-            queue.append(curr.leftchild)
-        if curr.rightchild:
-            queue.append(curr.rightchild)
-
-    return json.dumps(list, indent=2)
+    return json.dumps(result, indent=2)
