@@ -84,10 +84,11 @@ def delete(root: Node, key: int) -> Node:
 
             temp = minValue(root.rightchild)
             root.key = temp.key
-            root.keycount = temp.keycount
+            root.keycount = 1  # Reset the keycount of the current node
             root.rightchild = delete(root.rightchild, temp.key)
 
     return root
+
 
 
 
