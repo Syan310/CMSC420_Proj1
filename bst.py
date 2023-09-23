@@ -10,10 +10,18 @@ class Node():
         self.rightchild = rightchild
 
 def dump(root: Node) -> str:
-    # Given in the prompt, not modifying this.
-    #...
-    #...
-
+    def _to_dict(node) -> dict:
+        return {
+            "key": node.key,
+            "keycount": node.keycount,
+            "leftchild": (_to_dict(node.leftchild) if node.leftchild is not None else None),
+            "rightchild": (_to_dict(node.rightchild) if node.rightchild is not None else None)
+        }
+    if root == None:
+        dict_repr = {}
+    else:
+        dict_repr = _to_dict(root)
+    return json.dumps(dict_repr,indent = 2)
 # ... [rest of the provided code]
 
 # 1. Insert function:
