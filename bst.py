@@ -39,102 +39,90 @@ def dump(root: Node) -> str:
 def insert(root: Node, key: int) -> Node:
     if not root:
         return Node(key=key, keycount=1)
-    if key == root.key:
+    if root.key == key:
         root.keycount += 1
-    elif key < root.key:
+    elif root.key > key:
         root.leftchild = insert(root.leftchild, key)
     else:
         root.rightchild = insert(root.rightchild, key)
     return root
 
-# Helper function to find the minimum value node
-def _find_min(node: Node) -> Node:
+def delete(root: Node, key: int) -> Node:
+    if not root:
+        return root
+    if root.key == key:
+        root.keycount -= 1
+        if root.keycount == 0:
+            if not root.leftchild:
+                temp = root.rightchild
+                root = None
+                return temp
+            elif not root.rightchild:
+                temp = root.leftchild
+                root = None
+                return temp
+            temp = find_min(root.rightchild)
+            root.key = temp.key
+            root.keycount = temp.keycount
+            root.rightchild = delete(root.rightchild, temp.key)
+    elif root.key > key:
+        root.leftchild = delete(root.leftchild, key)
+    else:
+        root.rightchild = delete(root.rightchild, key)
+    return root
+
+def find_min(node):
     current = node
     while current.leftchild:
         current = current.leftchild
     return current
 
-# Delete function
-def delete(root: Node, key: int) -> Node:
-    if not root:
-        return root
-    if key < root.key:
-        root.leftchild = delete(root.leftchild, key)
-    elif key > root.key:
-        root.rightchild = delete(root.rightchild, key)
-    else:
-        root.keycount -= 1
-        if root.keycount == 0:
-            if not root.leftchild:
-                return root.rightchild
-            elif not root.rightchild:
-                return root.leftchild
-            temp = _find_min(root.rightchild)
-            root.key = temp.key
-            root.keycount = temp.keycount
-            root.rightchild = delete(root.rightchild, temp.key)
-    return root
-
-# Search function
 def search(root: Node, search_key: int) -> str:
     path = []
     current = root
     while current:
         path.append(current.key)
-        if search_key == current.key:
+        if current.key == search_key:
             break
-        elif search_key < current.key:
+        elif current.key > search_key:
             current = current.leftchild
         else:
             current = current.rightchild
     return json.dumps(path, indent=2)
 
-# Preorder function
-def _preorder(node: Node, result: List[int]):
-    if node:
-        result.append(node.key)
-        _preorder(node.leftchild, result)
-        _preorder(node.rightchild, result)
-
 def preorder(root: Node) -> str:
     result = []
-    _preorder(root, result)
+    if root:
+        result.append(root.key)
+        result.extend(json.loads(preorder(root.leftchild)))
+        result.extend(json.loads(preorder(root.rightchild)))
     return json.dumps(result, indent=2)
-
-# Inorder function
-def _inorder(node: Node, result: List[int]):
-    if node:
-        _inorder(node.leftchild, result)
-        result.append(node.key)
-        _inorder(node.rightchild, result)
 
 def inorder(root: Node) -> str:
     result = []
-    _inorder(root, result)
+    if root:
+        result.extend(json.loads(inorder(root.leftchild)))
+        result.append(root.key)
+        result.extend(json.loads(inorder(root.rightchild)))
     return json.dumps(result, indent=2)
-
-# Postorder function
-def _postorder(node: Node, result: List[int]):
-    if node:
-        _postorder(node.leftchild, result)
-        _postorder(node.rightchild, result)
-        result.append(node.key)
 
 def postorder(root: Node) -> str:
     result = []
-    _postorder(root, result)
+    if root:
+        result.extend(json.loads(postorder(root.leftchild)))
+        result.extend(json.loads(postorder(root.rightchild)))
+        result.append(root.key)
     return json.dumps(result, indent=2)
 
-# BFT function
 def bft(root: Node) -> str:
-    if not root:
-        return json.dumps([], indent=2)
-    queue, result = [root], []
-    while queue:
-        current = queue.pop(0)
-        result.append(current.key)
-        if current.leftchild:
-            queue.append(current.leftchild)
-        if current.rightchild:
-            queue.append(current.rightchild)
+    result = []
+    if root:
+        queue = [root]
+        while queue:
+            current = queue.pop(0)
+            result.append(current.key)
+            if current.leftchild:
+                queue.append(current.leftchild)
+            if current.rightchild:
+                queue.append(current.rightchild)
     return json.dumps(result, indent=2)
