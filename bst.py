@@ -1,3 +1,36 @@
+import json
+from typing import List
+
+# DO NOT MODIFY THIS CLASS!
+class Node():
+    def  __init__(self,
+                  key        = None,
+                  keycount   = None,
+                  leftchild  = None,
+                  rightchild = None):
+        self.key        = key
+        self.keycount   = keycount
+        self.leftchild  = leftchild
+        self.rightchild = rightchild
+
+# DO NOT MODIFY THIS FUNCTION!
+# For the tree rooted at root, dump the tree to stringified JSON object and return.
+# NOTE: in future projects you'll need to write the dump code yourself,
+# but here it's given to you.
+def dump(root: Node) -> str:
+    def _to_dict(node) -> dict:
+        return {
+            "key": node.key,
+            "keycount": node.keycount,
+            "leftchild": (_to_dict(node.leftchild) if node.leftchild is not None else None),
+            "rightchild": (_to_dict(node.rightchild) if node.rightchild is not None else None)
+        }
+    if root == None:
+        dict_repr = {}
+    else:
+        dict_repr = _to_dict(root)
+    return json.dumps(dict_repr,indent = 2)
+
 def insert(root: Node, key: int) -> Node:
     if not root:
         return Node(key=key, keycount=1)
