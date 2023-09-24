@@ -112,16 +112,17 @@ def search(root: Node, search_key: int) -> str:
 
 # For the tree rooted at root, find the preorder traversal.
 # Return the json.dumps of the list with indent=2.
+def _preorder(node: Node, result: List[int]):
+    if node:
+        result.append(node.key)
+        _preorder(node.leftchild, result)
+        _preorder(node.rightchild, result)
+
 def preorder(root: Node) -> str:
     result = []
-    def preorder_h(node):
-        if not node:
-            return
-        result.append(node.key)
-        preorder_h(node.leftchild)
-        preorder_h(node.rightchild)
-    preorder_h(root)
+    _preorder(root, result)
     return json.dumps(result, indent=2)
+
 
 
 # For the tree rooted at root, find the inorder traversal.
