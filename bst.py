@@ -37,101 +37,99 @@ def dump(root: Node) -> str:
 # If the key is not in the tree, insert it with a keycount of 1.
 # If the key is in the tree, increment its keycount.
 def insert(root: Node, key: int) -> Node:
-    if root is None:
-        return Node(key = key, keycount = 1)
-    
-    
+    if not root:
+        return Node(key=key, keycount=1)
     if key == root.key:
         root.keycount += 1
-        
     elif key < root.key:
         root.leftchild = insert(root.leftchild, key)
-        
     else:
         root.rightchild = insert(root.rightchild, key)
-        
     return root
 
+# Helper function to find the minimum value node
+def _find_min(node: Node) -> Node:
+    current = node
+    while current.leftchild:
+        current = current.leftchild
+    return current
 
-
-# For the tree rooted at root and the key given:
-# If the key is not in the tree, do nothing.
-# If the key is in the tree, decrement its key count. If they keycount goes to 0, remove the key.
-# When replacement is necessary use the inorder successor.
+# Delete function
 def delete(root: Node, key: int) -> Node:
     if not root:
-        return None
-
-    if key == root.key:
-        root.keycount -= 1
-        if root.keycount <= 0:
-            # If node with two children, get the inorder successor
-            if root.leftchild and root.rightchild:
-                successor = root.rightchild
-                while successor.leftchild:
-                    successor = successor.leftchild
-                root.key, root.keycount = successor.key, successor.keycount
-                root.rightchild = delete(root.rightchild, successor.key)
-            else:
-                root = root.leftchild or root.rightchild
-    elif key < root.key:
+        return root
+    if key < root.key:
         root.leftchild = delete(root.leftchild, key)
-    else:
+    elif key > root.key:
         root.rightchild = delete(root.rightchild, key)
+    else:
+        root.keycount -= 1
+        if root.keycount == 0:
+            if not root.leftchild:
+                return root.rightchild
+            elif not root.rightchild:
+                return root.leftchild
+            temp = _find_min(root.rightchild)
+            root.key = temp.key
+            root.keycount = temp.keycount
+            root.rightchild = delete(root.rightchild, temp.key)
     return root
 
-
-
-    
-# For the tree rooted at root and the key given:
-# Calculate the list of keys on the path from the root towards the search key.
-# The key is not guaranteed to be in the tree.
-# Return the json.dumps of the list with indent=2.
+# Search function
 def search(root: Node, search_key: int) -> str:
-    list = []
-    curr = root
-   
-    while curr:
-        list.append(curr.key)
-        
-        if curr.key == search_key:
+    path = []
+    current = root
+    while current:
+        path.append(current.key)
+        if search_key == current.key:
             break
-        elif curr.key > search_key:
-            curr = curr.leftchild
-        elif curr.key < search_key:
-            curr = curr.rightchild
-            
-    return (json.dumps(list, indent=2))
+        elif search_key < current.key:
+            current = current.leftchild
+        else:
+            current = current.rightchild
+    return json.dumps(path, indent=2)
 
-
-def _traversal(root: Node, order="in"):
-    result = []
-    if not root:
-        return result
-
-    if order == "pre":
-        result.append(root.key)
-    result.extend(_traversal(root.leftchild, order))
-    if order == "in":
-        result.append(root.key)
-    result.extend(_traversal(root.rightchild, order))
-    if order == "post":
-        result.append(root.key)
-    return result
+# Preorder function
+def _preorder(node: Node, result: List[int]):
+    if node:
+        result.append(node.key)
+        _preorder(node.leftchild, result)
+        _preorder(node.rightchild, result)
 
 def preorder(root: Node) -> str:
-    return json.dumps(_traversal(root, "pre"), indent=2)
+    result = []
+    _preorder(root, result)
+    return json.dumps(result, indent=2)
+
+# Inorder function
+def _inorder(node: Node, result: List[int]):
+    if node:
+        _inorder(node.leftchild, result)
+        result.append(node.key)
+        _inorder(node.rightchild, result)
 
 def inorder(root: Node) -> str:
-    return json.dumps(_traversal(root, "in"), indent=2)
+    result = []
+    _inorder(root, result)
+    return json.dumps(result, indent=2)
+
+# Postorder function
+def _postorder(node: Node, result: List[int]):
+    if node:
+        _postorder(node.leftchild, result)
+        _postorder(node.rightchild, result)
+        result.append(node.key)
 
 def postorder(root: Node) -> str:
-    return json.dumps(_traversal(root, "post"), indent=2)
+    result = []
+    _postorder(root, result)
+    return json.dumps(result, indent=2)
 
+# BFT function
 def bft(root: Node) -> str:
     if not root:
         return json.dumps([], indent=2)
-    result, queue = [], [root]
+    queue, result = [root], []
     while queue:
         current = queue.pop(0)
         result.append(current.key)
