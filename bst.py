@@ -1,4 +1,4 @@
-ximport json
+import json
 from typing import List
 
 # DO NOT MODIFY THIS CLASS!
@@ -37,7 +37,7 @@ def dump(root: Node) -> str:
 # If the key is not in the tree, insert it with a keycount of 1.
 # If the key is in the tree, increment its keycount.
 def insert(root: Node, key: int) -> Node:
-    if root is None:
+    if not root :
         return Node(key = key, keycount = 1)
     
     
@@ -55,10 +55,17 @@ def insert(root: Node, key: int) -> Node:
 
 
 
+def minValue(node: Node) -> Node:
+        curr = node
+        while curr.leftchild:
+            curr = curr.leftchild
+        return curr
+
 # For the tree rooted at root and the key given:
 # If the key is not in the tree, do nothing.
 # If the key is in the tree, decrement its key count. If they keycount goes to 0, remove the key.
 # When replacement is necessary use the inorder successor.
+
 
 def delete(root: Node, key: int) -> Node:
     if not root:
@@ -81,12 +88,6 @@ def delete(root: Node, key: int) -> Node:
     else:
         root.rightchild = delete(root.rightchild, key)
     return root
-
-
-
-
-
-
 
 
 
