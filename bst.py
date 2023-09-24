@@ -65,19 +65,28 @@ def delete(root: Node, key: int) -> Node:
     elif key > root.key:
         root.rightchild = delete(root.rightchild, key)
     
+    # Node with the key found
     else:
-        # Node with one child or no child
-        if not root.leftchild:
-            return root.rightchild
-        elif not root.rightchild:
-            return root.leftchild
-        
-        # Node with two children, get the inorder successor (smallest in the right subtree)
-        root.key = find_min(root.rightchild).key
-        # Decrease keycount of the in-order successor or remove it if its keycount becomes 0
-        root.rightchild = delete(root.rightchild, root.key)
+        if root.keycount > 1:
+            root.keycount -= 1
+            return root
+        else:
+            # Node with one child or no child
+            if not root.leftchild:
+                return root.rightchild
+            if not root.rightchild:
+                return root.leftchild
+            
+            # Node with two children, get the inorder successor (smallest in the right subtree)
+            temp = find_min(root.rightchild)
+            root.key = temp.key
+            if temp.keycount > 1:
+                temp.keycount -= 1
+            else:
+                root.rightchild = delete(root.rightchild, temp.key)
     
     return root
+
 
 
 def search(root: Node, search_key: int) -> str:
