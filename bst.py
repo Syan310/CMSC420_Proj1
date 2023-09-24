@@ -47,34 +47,38 @@ def insert(root: Node, key: int) -> Node:
         root.rightchild = insert(root.rightchild, key)
     return root
 
-def delete(root: Node, key: int) -> Node:
-    if root is None:
-        return root  # key not found
-    
-    if key < root.key:
-        root.leftchild = delete(root.leftchild, key)
-    elif key > root.key:
-        root.rightchild = delete(root.rightchild, key)
-    else:  # key found
-        if root.keycount > 1:
-            root.keycount -= 1
-        else:  # keycount is 1, so remove the node
-            if not root.leftchild:
-                return root.rightchild
-            elif not root.rightchild:
-                return root.leftchild
-            temp = _find_min_node(root.rightchild)  # find inorder successor
-            root.key = temp.key
-            root.keycount = temp.keycount
-            root.rightchild = delete(root.rightchild, temp.key)
-            
-    return root
-
-def _find_min_node(root: Node) -> Node:
-    current = root
-    while current.leftchild is not None:
+def find_min(node: Node) -> Node:
+    current = node
+    while current.leftchild:
         current = current.leftchild
     return current
+
+def delete(root: Node, key: int) -> Node:
+    if not root:
+        return root
+    
+    # Key is smaller, go left
+    if key < root.key:
+        root.leftchild = delete(root.leftchild, key)
+    
+    # Key is larger, go right
+    elif key > root.key:
+        root.rightchild = delete(root.rightchild, key)
+    
+    else:
+        # Node with one child or no child
+        if not root.leftchild:
+            return root.rightchild
+        elif not root.rightchild:
+            return root.leftchild
+        
+        # Node with two children, get the inorder successor (smallest in the right subtree)
+        root.key = find_min(root.rightchild).key
+        # Decrease keycount of the in-order successor or remove it if its keycount becomes 0
+        root.rightchild = delete(root.rightchild, root.key)
+    
+    return root
+
 
 def search(root: Node, search_key: int) -> str:
     result = []
