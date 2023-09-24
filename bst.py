@@ -44,81 +44,102 @@ def insert(root: Node, key: int) -> Node:
 
 def delete(root: Node, key: int) -> Node:
     if not root:
-        return None
-    if key == root.key:
-        root.keycount -= 1
-        if root.keycount == 0:
-            # Node with only one child or no child
-            if not root.leftchild:
-                return root.rightchild
-            elif not root.rightchild:
-                return root.leftchild
-            # Node with two children
-            root.key = minValue(root.rightchild)
-            root.rightchild = delete(root.rightchild, root.key)
-    elif key < root.key:
+        return root  # Key not found in the tree
+    
+    # Traverse to find the node
+    if key < root.key:
         root.leftchild = delete(root.leftchild, key)
-    else:
+    elif key > root.key:
         root.rightchild = delete(root.rightchild, key)
+    else:  # Node to delete is found
+        root.keycount -= 1
+        if root.keycount == 0:  # If keycount is 0, delete the node
+            # Node with one or no child
+            if not root.leftchild:
+                temp = root.rightchild
+                root = None
+                return temp
+            elif not root.rightchild:
+                temp = root.leftchild
+                root = None
+                return temp
+            
+            # Node with two children
+            temp = find_min_value_node(root.rightchild)
+            root.key = temp.key
+            root.keycount = temp.keycount
+            root.rightchild = delete(root.rightchild, temp.key)
+    
     return root
 
-def minValue(node):
+def find_min_value_node(node):
     current = node
     while current.leftchild is not None:
         current = current.leftchild
-    return current.key
+    return current
 
 def search(root: Node, search_key: int) -> str:
     path = []
-    while root:
-        path.append(root.key)
-        if search_key == root.key:
-            break
-        elif search_key < root.key:
-            root = root.leftchild
+    current = root
+    while current:
+        path.append(current.key)
+        if search_key < current.key:
+            current = current.leftchild
+        elif search_key > current.key:
+            current = current.rightchild
         else:
-            root = root.rightchild
+            break  # Key found
     return json.dumps(path, indent=2)
 
+
 def preorder(root: Node) -> str:
-    def traverse(node):
-        if node:
-            keys.append(node.key)
-            traverse(node.leftchild)
-            traverse(node.rightchild)
-    keys = []
-    traverse(root)
-    return json.dumps(keys, indent=2)
+    result = []
+    def _preorder(node):
+        if not node:
+            return
+        result.append(node.key)
+        _preorder(node.leftchild)
+        _preorder(node.rightchild)
+    _preorder(root)
+    return json.dumps(result, indent=2)
+
 
 def inorder(root: Node) -> str:
-    def traverse(node):
-        if node:
-            traverse(node.leftchild)
-            keys.append(node.key)
-            traverse(node.rightchild)
-    keys = []
-    traverse(root)
-    return json.dumps(keys, indent=2)
+    result = []
+    def _inorder(node):
+        if not node:
+            return
+        _inorder(node.leftchild)
+        result.append(node.key)
+        _inorder(node.rightchild)
+    _inorder(root)
+    return json.dumps(result, indent=2)
+
 
 def postorder(root: Node) -> str:
-    def traverse(node):
-        if node:
-            traverse(node.leftchild)
-            traverse(node.rightchild)
-            keys.append(node.key)
-    keys = []
-    traverse(root)
-    return json.dumps(keys, indent=2)
+    result = []
+    def _postorder(node):
+        if not node:
+            return
+        _postorder(node.leftchild)
+        _postorder(node.rightchild)
+        result.append(node.key)
+    _postorder(root)
+    return json.dumps(result, indent=2)
 
 def bft(root: Node) -> str:
     if not root:
         return json.dumps([], indent=2)
-    keys, queue = [], [root]
+    
+    result = []
+    queue = [root]
     while queue:
         current = queue.pop(0)
-        keys.append(current.key)
+        result.append(current.key)
         if current.leftchild:
             queue.append(current.leftchild)
         if current.rightchild:
             queue.append(current.rightchild)
-    return json.dumps(keys, indent=2)
+    
+    return json.dumps(result, indent=2)
+
